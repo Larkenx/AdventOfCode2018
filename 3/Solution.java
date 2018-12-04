@@ -13,9 +13,9 @@ class Solution {
         HashMap<String, Integer> histogram = new HashMap<>();
         HashMap<String, List<String>> claimsKeys = new HashMap<>();
         String claimIdWithNoOverlaps = "none";
-        for (String claim : claims) {
-//                #1 @ 37,526: 17x23
-            Pattern p = Pattern.compile("#(?<claimId>\\d*)\\s@\\s(?<x>\\d+),(?<y>\\d+):\\s(?<width>\\d+)x(?<height>\\d+)");
+        // #1 @ 37,526: 17x23
+        Pattern p = Pattern.compile("#(?<claimId>\\d*)\\s@\\s(?<x>\\d+),(?<y>\\d+):\\s(?<width>\\d+)x(?<height>\\d+)");
+        for (String claim : claims) {           
             Matcher matcher = p.matcher(claim);
             matcher.find();
             String claimId = matcher.group("claimId");
