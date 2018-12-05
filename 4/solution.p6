@@ -96,5 +96,29 @@ for %guardMinutesSleeping<>:k -> $id {
 say 'The sleepiest guard is ' ~ $sleepiestGuard;
 say 'He has slept a total of ' ~ $mostMinutesSleptByGuard;
 say 'His sleepiest minute was ' ~ $sleepiestGlobalMinute;
-# say $sleepiestGuard ~~  * $sleepiestGlobalMinute;
+
+my $highestConsistentMinuteAmt = 0;
+my $partbid = '';
+my $partbminute = 0;
+for %guardMinutesSleeping<>:k -> $id {
+  # start with a zero zum & sleepiest minute has no minutes
+  my $sleepiestMinute = 0;
+  my $highestFrequency = 0;
+  my %minutesHistogram = %guardMinutesSleeping{$id};
+  # for each minute, 0..59
+  for %minutesHistogram<>:k -> $minute {
+    my $totalMinutesAtThisTime = %minutesHistogram{$minute};
+    if $totalMinutesAtThisTime > $highestFrequency {
+      $highestFrequency = $totalMinutesAtThisTime;
+      $sleepiestMinute  = $minute;
+    }
+  }
+  if $highestFrequency > $highestConsistentMinuteAmt {
+    $highestConsistentMinuteAmt = $highestFrequency;
+    $partbid = $id;
+    $partbminute = $sleepiestMinute;
+  }
+}
+say $partbid ~ '*' ~ $partbminute;
+
 $file.close;
