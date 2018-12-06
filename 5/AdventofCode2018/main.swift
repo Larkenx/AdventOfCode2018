@@ -63,7 +63,4 @@ do {
     let polymerString = String(data).trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
     solveA(polymerString: polymerString)
     solveB(polymerString: polymerString)
-    
 }
-
-
