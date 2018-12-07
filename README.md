@@ -6,3 +6,4 @@ These are all of my solutions for [Advent of Code 2018](https://adventofcode.com
 3. [Java](https://github.com/Larkenx/AdventOfCode2018/blob/master/3/Solution.java)
 4. [Perl 6](https://github.com/Larkenx/AdventOfCode2018/blob/master/4/solution.p6)
 5. [Swift](https://github.com/Larkenx/AdventOfCode2018/blob/master/5/AdventofCode2018/main.swift)
+6. [~~Powershell~~](https://github.com/Larkenx/AdventOfCode2018/blob/master/6/failed-solution.ps1) [Lua](https://github.com/Larkenx/AdventOfCode2018/blob/master/6/solution.lua)
