@@ -48,94 +48,119 @@ function uid(n)
 end
 
 coords = {}
-startx = math.huge
-starty = math.huge
-width = -math.huge
-height = -math.huge
+startx = 0
+starty = 0
+width = 0
+height = 0
 for line in io.lines(path) do
     local point = map(tonumber, split(line, ", "))
     local id = uid(#coords+1)
     local coord = {x=point[1], y=point[2], id=id}
-    if startx == nil or coord.x < startx then
-        startx = coord.x
-    end
-
-    if starty == nill or coord.y <  starty then
-        starty = coord.y
-    end
-
-    if width == nil or coord.x > width then 
+    if  coord.x > width then 
         width = coord.x
     end
 
-    if height == nil or coord.y > height then 
+    if  coord.y > height then 
         height = coord.y
     end
-    -- print(id)
     coords[#coords + 1] = coord
 end 
 
 histogram = {}
 visualization = {}
+idealVisualization = {}
 infiniteRegions = {}
+idealRegion = {}
 for y = starty, height, 1
 do 
     visualization[y] = {}
+    idealVisualization[y] = {}
+
     for x = startx, width, 1
     do
         local closest= nil
         local minDist = math.huge
         local tied = false
+        local sum = 0
         for index, coord in pairs(coords) do
             local dist = manhattan(x, coord.x, y, coord.y)
+            sum = sum + dist
             if dist == minDist then
-            visualization[y][x] = "."
-                break
-            elseif dist < minDist then
+                tied = true
+            end
+
+            if dist < minDist then
                 minDist = dist
                 closest = coord
+                tied = false
             end
         end
-        visualization[y][x] = closest.id
-        -- whenever there is a point that is on a border, the closest point is immediately infinite!
+
+        if sum < 10000 then
+            idealRegion[#idealRegion + 1] = {x=x, y=y}
+            idealVisualization[y][x] = "/"
+        else 
+            idealVisualization[y][x] = closest.id
+        end
+
+
         if x == width or y == height or x == startx or y == starty then
             infiniteRegions[closest.id] = true
         end
 
-        if histogram[closest.id] == nil then
-            histogram[closest.id] = 1
-        else 
-            histogram[closest.id] = histogram[closest.id] + 1
+        if tied then
+            visualization[y][x] = "."
+        else
+            visualization[y][x] = closest.id
+            if histogram[closest.id] == nil then
+                histogram[closest.id] = 1
+            else 
+                histogram[closest.id] = histogram[closest.id] + 1
+            end
         end
+
     end
 end
 
-string = ""
-for y = starty, height, 1
-do 
-    for x = startx, width, 1
-    do
-        string = string .. visualization[y][x]
+function visualize() 
+    string = ""
+    idealString = ""
+    for y = starty, height, 1
+    do 
+        for x = startx, width, 1
+        do
+            string = string .. visualization[y][x]
+            idealString = idealString .. idealVisualization[y][x]
+
+        end
+        string = string .. "\n"
     end
-    string = string .. "\n"
+
+    local visfile = open("visualization.txt", "w")
+    output(visfile)
+    io.write(string)
+
+    local visfile = open("idealVisualization.txt", "w")
+    output(visfile)
+    io.write(idealString)
 end
 
-local visfile = open("visualization.txt", "w")
-output(visfile)
-io.write(string)
 biggestSpace = 0
+print("Starting at " .. "(" .. startx .. ", " .. starty ..") " .. "and going to " .. "(" .. width .. ", " .. height ..") ")
 for index, coord in pairs(coords) do
     if histogram[coord.id] ~= nil then
         local dist = histogram[coord.id]
-        if infiniteRegions[coord.id] ~= nil then 
+        if infiniteRegions[coord.id] == true then 
             print(coord.id .. " @ " .. "("..coord.x..","..coord.y..")".. " is infinite!")
         else
+            if dist > biggestSpace then 
+                biggestSpace = dist 
+            end 
             print(coord.id .. " @ " .. "("..coord.x..","..coord.y..")".. " : " .. histogram[coord.id])
         end
-        if dist > biggestSpace then 
-            biggestSpace = dist 
-        end 
+        
     end
 end
-
 print("Largest area : "..biggestSpace)
+print("Size of ideal region : " .. #idealRegion)
+
